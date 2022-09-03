@@ -13,6 +13,8 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
+          - macos-latest
+          - windows-latest
         go:
           - "1.19"
     runs-on: ${{ matrix.os }}
@@ -27,13 +29,29 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
 
+      # change to coverage.out after https://github.com/PowerShell/PowerShell/issues/6291
       - name: Calc coverage
         run: |
-          go test -v -covermode=count -coverprofile=coverage.out ./...
-      - name: Convert coverage.out to coverage.lcov
-        uses: jandelgado/gcov2lcov-action@master
+          go test -v -covermode=count -coverprofile=coverageout ./...
+
+      - name: Convert coverageout to coveragelcov
+        run: |
+          go install github.com/jandelgado/gcov2lcov@latest
+          gcov2lcov -infile=coverageout -outfile=coveragelcov
+
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: coverage.lcov
+          path-to-lcov: coveragelcov
+          parallel: true
+
+  coverage_finalize:
+    runs-on: ubuntu-latest
+    needs: coverage
+    steps:
+      - name: Coveralls finalization
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
