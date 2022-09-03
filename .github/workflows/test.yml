@@ -5,7 +5,7 @@ on:
     paths: ["**.go", "go.mod", ".github/workflows/*"]
 
 jobs:
-  test:
+  test-latest:
     strategy:
       fail-fast: false
       matrix:
@@ -15,10 +15,6 @@ jobs:
           - macos-latest
         go:
           - "1.19"
-          - "1.17"
-          - "1.15"
-          - "1.13"
-          - "1.10"
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
@@ -32,16 +28,9 @@ jobs:
           go-version: ${{ matrix.go }}
 
       - name: test
-        if: runner.os != 'Windows'
         run: |
           go install github.com/jstemmer/go-junit-report/v2@latest
           go test -v -race ./... 2>&1 | go-junit-report -set-exit-code -iocopy -out report.xml
-
-      - name: test-windows
-        if: runner.os == 'Windows'
-        run: |
-          go install github.com/jstemmer/go-junit-report/v2@latest
-          go test -v ./... 2>&1 | go-junit-report -set-exit-code -iocopy -out report.xml
 
       - name: Test Report
         uses: dorny/test-reporter@v1
@@ -57,3 +46,34 @@ jobs:
         with:
           paths: report.xml
         if: always()
+
+  test-earliest:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+        go:
+          - "1.16"
+          - "1.15"
+          - "1.13"
+          - "1.12"
+          - "1.11"
+          - "1.10"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: test
+        run: |
+          go test -v -race ./...
