@@ -12,3 +12,5 @@ Sync files between different hosts over a one way network link such as a Data Di
 - GetAvailableBytes: returns the amount of bytes on the listening socket
 
 Works on linux, windows and mac
+
+Go 1.13-1.19
