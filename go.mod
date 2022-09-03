@@ -1,4 +1,4 @@
-module socketbuffer
+module github.com/danlapid/socketbuffer
 
 go 1.19
 
