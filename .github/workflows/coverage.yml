@@ -32,18 +32,18 @@ jobs:
       # change to coverage.out after https://github.com/PowerShell/PowerShell/issues/6291
       - name: Calc coverage
         run: |
-          go test -v -covermode=count -coverprofile=coverage ./...
+          go test -v -covermode=count -coverprofile=coverageout ./...
 
-      - name: Convert coverage to coverage.lcov
+      - name: Convert coverageout to coveragelcov
         run: |
           go install github.com/jandelgado/gcov2lcov@latest
-          gcov2lcov -infile=coverage -outfile=coverage.lcov
+          gcov2lcov -infile=coverageout -outfile=coveragelcov
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: coverage.lcov
+          path-to-lcov: coveragelcov
           parallel: true
 
   coverage_finalize:
