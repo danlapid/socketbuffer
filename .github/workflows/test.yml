@@ -56,8 +56,6 @@ jobs:
           - windows-latest
           - macos-latest
         go:
-          - "1.16"
-          - "1.15"
           - "1.13"
     runs-on: ${{ matrix.os }}
     steps:
