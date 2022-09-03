@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"math/rand"
 	"net"
-	"socketbuffer"
 	"testing"
 	"time"
+
+	"github.com/danlapid/socketbuffer"
 )
 
 func TestGetReadBufferUdp(t *testing.T) {
